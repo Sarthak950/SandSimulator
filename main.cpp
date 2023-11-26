@@ -3,22 +3,21 @@
 #include <raylib.h>
 #include <bits/stdc++.h>
 
-int screenWidth = 800;
-int screenHeight = 800;
-
-const int gridSize = 200;
-// int cellSize = screenWidth / gridSize;
-int cellSize = 4;
-
-// create the grid as a 2d static array 
-int grid[gridSize][gridSize];
+// Constsants
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 800;
+const int GRID_SIZE = 200;
+const int CELL_SIZE = 4;
+const int FPS = 7;
+// not const 
+int grid[GRID_SIZE][GRID_SIZE];
 
 /*
-//we are making a sand simulator so there are 4 states of a cell
-    1 Empty 
-    2 Rock which are immovable 
-    3 Sand which falls down 
-    4 Water which flows down and to the sides
+    we are making a sand simulator so there are 4 states of a cell
+        1. Empty 
+        2. Rock which are immovable 
+        3. Sand which falls down 
+        4. Water which flows down and to the sides
 */
 
 #define EMPTY 0
@@ -31,62 +30,45 @@ int grid[gridSize][gridSize];
 void InitializeGrid() {
 
     // Border aroound the grid 
-    for (int i = 0; i < gridSize; i++) {
-        grid[gridSize - 1][i] = ROCK;
-        grid[i][gridSize - 1] = ROCK;
+    for (int i = 0; i < GRID_SIZE; i++) {
+        grid[GRID_SIZE - 1][i] = ROCK;
+        grid[i][GRID_SIZE - 1] = ROCK;
         grid[0][i] = ROCK;
         grid[i][0] = ROCK;
     }
 
+    // set a sand in the center 
+    // grid[GRID_SIZE / 2][GRID_SIZE / 2] = SAND;
+
     // set some sand in the air 
-    for (int i = 0; i < 30; i++) {
-        grid[gridSize - 100][i + 50] = SAND;
+    for (int i = 0; i < 40; i++) {
+        grid[GRID_SIZE - 100][(i + 5)*3] = SAND;
     }
-    
+
 }
 
 void UpdateGrid() {
-
-    for ( int i = gridSize -1 ; i > 0 ; i-- ) {
-        for ( int j = 0 ; j < gridSize ; j++ ) {
-            if (grid[i][j] == SAND) {
-                if (grid[i + 1][j] == EMPTY) {
-                    grid[i + 1][j] = SAND;
+    
+    // from bottom left to the top right
+    for (int i= 0;i<GRID_SIZE;i++) {
+        for ( int j = GRID_SIZE;j>0;j--) {
+            if ( grid[i][j] == SAND) {
+                if (grid[i][j+1] == EMPTY) {
+                    grid[i][j+1] = SAND;
                     grid[i][j] = EMPTY;
                 }
-                else if (grid[i + 1][j - 1] == EMPTY) {
-                    grid[i + 1][j - 1] = SAND;
+                else if (grid[i+1][j+1] == EMPTY) {
+                    grid[i+1][j+1] = SAND;
                     grid[i][j] = EMPTY;
                 }
-                else if (grid[i + 1][j + 1] == EMPTY) {
-                    grid[i + 1][j + 1] = SAND;
-                    grid[i][j] = EMPTY;
-                }
-            }
-            else if (grid[i][j] == WATER) {
-                if (grid[i + 1][j] == EMPTY) {
-                    grid[i + 1][j] = WATER;
-                    grid[i][j] = EMPTY;
-                }
-                else if (grid[i + 1][j - 1] == EMPTY) {
-                    grid[i + 1][j - 1] = WATER;
-                    grid[i][j] = EMPTY;
-                }
-                else if (grid[i + 1][j + 1] == EMPTY) {
-                    grid[i + 1][j + 1] = WATER;
-                    grid[i][j] = EMPTY;
-                }
-                else if (grid[i][j - 1] == EMPTY) {
-                    grid[i][j - 1] = WATER;
-                    grid[i][j] = EMPTY;
-                }
-                else if (grid[i][j + 1] == EMPTY) {
-                    grid[i][j + 1] = WATER;
+                else if (grid[i-1][j+1] == EMPTY) {
+                    grid[i-1][j+1] = SAND;
                     grid[i][j] = EMPTY;
                 }
             }
         }
     }
+
 
 }
 
@@ -95,11 +77,16 @@ void UpdateGrid() {
 
 void DrawBox (int x, int y, int width, int height, int state) {
 
-    if (state == ROCK) {
-        DrawRectangle(x, y, width, height, GRAY);
+    if (state == EMPTY) {
+        // DrawRectangle(x, y, width, height, WHITE);
+        DrawRectangle(x, y, width, height, LIME);
+    }
+    else if (state == ROCK) {
+        DrawRectangle(x, y, width, height,  BLACK);
     }
     else if (state == SAND) {
-        DrawRectangle(x, y, width, height, YELLOW);
+        // DrawRectangle(x, y, width, height, YELLOW);
+        DrawRectangle(x, y, width, height, GOLD);
     }
     else if (state == WATER) {
         DrawRectangle(x, y, width, height, BLUE);
@@ -110,34 +97,25 @@ void DrawBox (int x, int y, int width, int height, int state) {
 
 int main() {
 
-
-
-
-    InitWindow(screenWidth, screenHeight, "Conway's Game of Life");
-
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Conway's Game of Life");
     InitializeGrid();
-
-
-
-    SetTargetFPS(10);
+    SetTargetFPS(FPS);
 
     while (!WindowShouldClose()) {
+
+        // Setup the canvas
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
+        // Render the grid
+        for (int i = 0; i < GRID_SIZE; i++)
+            for (int j = 0; j < GRID_SIZE; j++)
+                // if (grid[i][j])
+                    DrawBox (i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE, grid[i][j]);
+
+
         // Update the grid
         UpdateGrid();
-
-        // Render the grid
-        for (int i = 0; i < gridSize; i++) {
-            for (int j = 0; j < gridSize; j++) {
-                if (grid[i][j]) {
-                    DrawBox (i * cellSize, j * cellSize, cellSize, cellSize, grid[i][j]);
-                    // DrawRectangle(i * cellSize, j * cellSize, cellSize, cellSize, BLACK);
-                }
-            }
-        }
-
         EndDrawing();
     }
 
