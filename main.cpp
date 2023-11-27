@@ -9,6 +9,7 @@
 */
 #include "raylib.h"
 #include <bits/stdc++.h>
+#include <iostream>
 #include <string>
 
 // Constsants
@@ -16,7 +17,7 @@ const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 800;
 const int GRID_SIZE = 200;
 const int CELL_SIZE = 4;
-const int FPS = 60;
+int FPS = 200;
 
 // not const 
 int grid[GRID_SIZE][GRID_SIZE];
@@ -46,14 +47,14 @@ void InitializeGrid() {
         grid[i][0] = ROCK;
     }
 
- 
+
 
 }
 
 void KeyPressHandeler () {
     int mouseX = GetMouseX();
     int mouseY = GetMouseY();
-    
+
     // mouse position needed to be divided by the cell size to get the grid position
     mouseX = mouseX / CELL_SIZE;
     mouseY = mouseY / CELL_SIZE;
@@ -75,6 +76,7 @@ void KeyPressHandeler () {
     else if (IsKeyPressed(KEY_BACKSPACE)) {
         InitializeGrid();
     }
+
 
 }
 
@@ -102,10 +104,14 @@ void DisplayCount () {
             else if (grid[i][j] == WATER) waterCount++;
         }
 
+    std::string rockCountString = FormatText("Rocks: %i", rockCount);
+    std::string sandCountString = FormatText("Sand: %i", sandCount);
+    std::string waterCountString = FormatText("Water: %i", waterCount);
+
     // Display the count
-    DrawText(FormatText("Rocks: %i", rockCount), 10, 10, 20, BLACK);
-    DrawText(FormatText("Sand: %i", sandCount), 10, 30, 20, BLACK);
-    DrawText(FormatText("Water: %i", waterCount), 10, 50, 20, BLACK);
+    DrawText(rockCountString.c_str(), 10, 10, 20, BLACK);
+    DrawText(sandCountString.c_str(), 10, 30, 20, BLACK);
+    DrawText(waterCountString.c_str(), 10, 50, 20, BLACK);
 
 }
 
@@ -149,23 +155,28 @@ void UpdateGrid() {
                     grid[i][j+1] = WATER;
                     grid[i][j] = EMPTY;
                 }
-                else if (grid[i-1][j] == EMPTY) {
-                    grid[i-1][j] = WATER;
+                else if (grid[i+1][j+1] == EMPTY) {
+                    grid[i+1][j+1] = WATER;
+                    grid[i][j] = EMPTY;
+                }
+                else if (grid[i-1][j+1] == EMPTY) {
+                    grid[i-1][j+1] = WATER;
                     grid[i][j] = EMPTY;
                 }
                 else if (grid[i+1][j] == EMPTY) {
                     grid[i+1][j] = WATER;
                     grid[i][j] = EMPTY;
                 }
-                // check for downward diagonal 
-               
+                else if (grid[i-1][j] == EMPTY) {
+                    grid[i-1][j] = WATER;
+                    grid[i][j] = EMPTY;
+                }
 
             }
         }
     }
 
 }
-
 
 
 
@@ -200,6 +211,7 @@ int main() {
         // Setup the canvas
         BeginDrawing();
         ClearBackground(RAYWHITE);
+
 
         // Render the grid
         for (int i = 0; i < GRID_SIZE; i++)
