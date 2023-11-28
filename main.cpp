@@ -7,12 +7,10 @@
         3. Sand which falls down 
         4. Water which flows down and to the sides
 */
+
 #include "raylib.h"
 #include <bits/stdc++.h>
-#include <iostream>
-#include <string>
 
-// Constsants
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 800;
 const int GRID_SIZE = 200;
@@ -31,7 +29,6 @@ int waterCount = 0;
 #define WATER 3
 
 
-// set a stage of 3 blocks of rock a little above the ground 
 void InitializeGrid() {
 
     // Set all cells to Empty
@@ -55,11 +52,8 @@ void KeyPressHandeler () {
     int mouseX = GetMouseX();
     int mouseY = GetMouseY();
 
-    // mouse position needed to be divided by the cell size to get the grid position
     mouseX = mouseX / CELL_SIZE;
     mouseY = mouseY / CELL_SIZE;
-
-
 
     if (IsKeyDown(KEY_SPACE) ) {
         grid[mouseX][mouseY] = ROCK;
@@ -92,7 +86,6 @@ std::string FormatText (const char *text, ...) {
 
 void DisplayCount () {
 
-    // count the number of rocks, sand and water 
     rockCount = 0;
     sandCount = 0;
     waterCount = 0;
@@ -120,7 +113,6 @@ void UpdateGrid() {
     KeyPressHandeler();
     DisplayCount();
 
-    // from bottom left to the top right
     for (int i= 0;i<GRID_SIZE;i++) {
         for ( int j = GRID_SIZE;j>0;j--) {
             if ( grid[i][j] == SAND) {
@@ -182,20 +174,14 @@ void UpdateGrid() {
 
 void DrawBox (int x, int y, int width, int height, int state) {
 
-    if (state == EMPTY) {
-        // DrawRectangle(x, y, width, height, WHITE);
-        DrawRectangle(x, y, width, height, LIME);
-    }
-    else if (state == ROCK) {
-        DrawRectangle(x, y, width, height,  BLACK);
-    }
-    else if (state == SAND) {
-        // DrawRectangle(x, y, width, height, YELLOW);
-        DrawRectangle(x, y, width, height, GOLD);
-    }
-    else if (state == WATER) {
-        DrawRectangle(x, y, width, height, BLUE);
-    }
+    auto color = CLITERAL(Color){ 0, 0, 0, 255 };
+
+    if (state == EMPTY)         color = CLITERAL(Color){ 243, 240, 202, 255 };
+    else if (state == ROCK)     color = CLITERAL(Color){ 0, 0, 0, 255 };
+    else if (state == SAND)     color = CLITERAL(Color){ 255, 170, 116, 255 };
+    else if (state == WATER)    color = CLITERAL(Color){ 56, 118, 191, 255 };
+
+    DrawRectangle(x, y, width, height, color);
 
 }
 
@@ -227,4 +213,3 @@ int main() {
 
     return 0;
 }
-
