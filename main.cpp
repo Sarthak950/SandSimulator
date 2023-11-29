@@ -188,7 +188,7 @@ void DrawBox (int x, int y, int width, int height, int state) {
 
 int main() {
 
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Conway's Game of Life");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Sand Sim");
     InitializeGrid();
     SetTargetFPS(FPS);
 
