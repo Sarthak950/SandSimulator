@@ -13,9 +13,9 @@
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 800;
-const int GRID_SIZE = 200;
 const int CELL_SIZE = 4;
-int FPS = 200;
+const int GRID_SIZE = 800/CELL_SIZE;
+int FPS = 400;
 
 // not const 
 int grid[GRID_SIZE][GRID_SIZE];
